@@ -18,7 +18,9 @@ if __name__ == "__main__":
     csv_data = load_carpark_csv("../data/HDBCarparkInformation.csv")
     # Fetch real-time data
     api_data = fetch_realtime_availability("https://api.data.gov.sg/v1/transport/carpark-availability")
-    if csv_data or api_data is None:
+    if csv_data is None:
+        exit(1)
+    if api_data is None:
         exit(1)
     # Merge data and clean it
     merged_data = merge_carpark_data(csv_data, api_data)
