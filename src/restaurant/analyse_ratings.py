@@ -17,7 +17,7 @@ def analyse_ratings(json_file):
     
     df = pd.read_json(json_file, encoding='utf-8')
     ratings_data = []
-
+    # Extract ratings text and score for each restaurant
     for restaurants in df["restaurants"]:
         for restaurant in restaurants:
             rating = restaurant["restaurant"]["user_rating"]["aggregate_rating"]
