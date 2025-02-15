@@ -3,9 +3,9 @@ from restaurant.restaurant_extractor import get_restaurant_data
 from restaurant.analyse_ratings import analyse_ratings
 
 from carpark.carpark_api import fetch_realtime_availability
-from carpark.static_carpark import load_carpark_csv
+from carpark.carpark_load_csv import load_carpark_csv
 from carpark.carpark_processing import merge_carpark_data
-from carpark.carpark_cli import create_cli, query_by_carpark_number, query_by_address, generate_carpark_report
+from carpark.carpark_cli import create_parser, query_by_carpark_number, query_by_address, generate_carpark_report
 
 if __name__ == "__main__":
     #case study 1
@@ -16,21 +16,15 @@ if __name__ == "__main__":
 
     #case study 2
     csv_data = load_carpark_csv("../data/HDBCarparkInformation.csv")
-    if csv_data is None:
-        exit(1)
-
     # Fetch real-time data
     api_data = fetch_realtime_availability("https://api.data.gov.sg/v1/transport/carpark-availability")
-    if api_data is None:
+    if csv_data or api_data is None:
         exit(1)
-
     # Merge data and clean it
     merged_data = merge_carpark_data(csv_data, api_data)
-    if merged_data is None:
-        exit(1)
-
+    
     # Setup CLI
-    parser = create_cli()
+    parser = create_parser()
     args = parser.parse_args()
 
     # Handle querying logic

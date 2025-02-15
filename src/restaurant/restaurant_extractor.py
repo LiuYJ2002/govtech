@@ -21,7 +21,7 @@ def get_country_code(file_path):
 
 def get_restaurant_data(json_file, country_codes_file, output_file):
     """
-    Extracts restaurant details from a JSON file and saves the data to a CSV file.
+    Extracts restaurant details from a JSON file that matches with country code and saves the data to a CSV file.
 
     Parameters:
     json_file (str): The path to the JSON file containing restaurant data.
@@ -42,6 +42,7 @@ def get_restaurant_data(json_file, country_codes_file, output_file):
     for restaurants in df["restaurants"]:
         for restaurant in restaurants:
             country_code = restaurant["restaurant"]["location"].get("country_id", "NA")
+            #check if the restaurant mactehs a country code
             if country_codes.get(country_code):
                 event_dates = []
                 if restaurant["restaurant"].get("zomato_events", "NA") != "NA":

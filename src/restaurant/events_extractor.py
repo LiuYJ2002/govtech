@@ -24,7 +24,7 @@ def is_event_in_april_2019(start_date, end_date):
 
 def get_restaurant_events(json_file, output_file):
     """
-    Extracts restaurant event data for events that occurred in April 2019 and saves it to a CSV file.
+    Extracts restaurant event data for events that overlaps with April 2019 and saves it to a CSV file.
 
     Parameters:
     json_file (str): The path to the JSON file containing restaurant data.
@@ -42,12 +42,14 @@ def get_restaurant_events(json_file, output_file):
     for restaurants in df["restaurants"]:
         for restaurant in restaurants:
             zomato_events = restaurant["restaurant"].get("zomato_events", "NA")
+            #check if the restaurant has events
             if zomato_events != "NA":
                     for event in zomato_events:
                         event = event.get("event", "NA")
                         event_start = event.get("start_date", "NA")
                         event_end = event.get("end_date", "NA")
                         if event_start != "NA" and event_end != "NA":
+                            #check if it overlaps with april 2019
                             if is_event_in_april_2019(event_start, event_end):
                                 event_list.append({
                                     "Event Id": event.get("event_id", "NA"),
