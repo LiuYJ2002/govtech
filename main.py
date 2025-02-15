@@ -1,26 +1,43 @@
 import pandas as pd
 from datetime import datetime
+import os
+
 
 def get_country_code(file_path):
-    # Load the data
+    """
+    Loads country code data from an Excel file and returns a dictionary mapping country codes to country names.
+
+    Parameters:
+    file_path (str): The path to the Excel file containing country codes and names.
+
+    Returns:
+    dict: A dictionary with country codes as keys and country names as values.
+    """
+    if not os.path.exists(file_path):
+        raise FileNotFoundError(f"File not found: {file_path}")
+    
     df = pd.read_excel(file_path)
     return dict(zip(df["Country Code"], df["Country"]))
 
-# Extract restaurant details
-# Only include restaurants with matching Country Codes from Country-Code.xlsx
-# Fields to extract:
-# ●	Restaurant Id
-# ●	Restaurant Name
-# ●	Country
-# ●	City
-# ●	User Rating Votes
-# ●	User Aggregate Rating (as float)
-# ●	Cuisines
-# ●	Event Date
-#●	Handle missing values by populating with "NA"
+
 def get_restaurant_data(json_file, country_codes, output_file):
+    """
+    Extracts restaurant details from a JSON file and saves the data to a CSV file.
+
+    Parameters:
+    json_file (str): The path to the JSON file containing restaurant data.
+    country_codes (dict): A dictionary mapping country codes to country names.
+    output_file (str): The path to the output CSV file where restaurant details will be saved.
+
+    Returns:
+    None
+    """
+    if not os.path.exists(json_file):
+        raise FileNotFoundError(f"File not found: {json_file}")
+    
     df = pd.read_json(json_file, encoding='utf-8')
     restaurant_list = []
+
     for restaurants in df["restaurants"]:
         for restaurant in restaurants:
             country_code = restaurant["restaurant"]["location"].get("country_id", "NA")
@@ -41,11 +58,22 @@ def get_restaurant_data(json_file, country_codes, output_file):
                     "Cuisines": restaurant["restaurant"].get("cuisines", "NA"),
                     "Event Date": event_dates
                 })
+
     restaurant_df = pd.DataFrame(restaurant_list)
     restaurant_df.to_csv(output_file, index=False)
 
+
 def is_event_in_april_2019(start_date, end_date):
-    """Check if an event overlaps with April 2019."""
+    """
+    Checks if an event overlaps with April 2019.
+
+    Parameters:
+    start_date (str): The start date of the event in 'YYYY-MM-DD' format.
+    end_date (str): The end date of the event in 'YYYY-MM-DD' format.
+
+    Returns:
+    bool: True if the event overlaps with April 2019, otherwise False.
+    """
     event_start = datetime.strptime(start_date, "%Y-%m-%d")
     event_end = datetime.strptime(end_date, "%Y-%m-%d")
 
@@ -53,19 +81,25 @@ def is_event_in_april_2019(start_date, end_date):
     april_end = datetime(2019, 4, 30)
 
     return event_start <= april_end and event_end >= april_start
-# Create a module to extract April 2019 events to restaurant_events.csv:
-# Fields to extract:
-# ●	Event Id
-# ●	Restaurant Id
-# ●	Restaurant Name
-# ●	Photo URL
-# ●	Event Title
-# ●	Event Start Date
-# ●	Event End Date
+
 
 def get_restaurant_events(json_file, output_file):
+    """
+    Extracts restaurant event data for events that occurred in April 2019 and saves it to a CSV file.
+
+    Parameters:
+    json_file (str): The path to the JSON file containing restaurant data.
+    output_file (str): The path to the output CSV file where event details will be saved.
+
+    Returns:
+    None
+    """
+    if not os.path.exists(json_file):
+        raise FileNotFoundError(f"File not found: {json_file}")
+    
     df = pd.read_json(json_file, encoding='utf-8')
     event_list = []
+
     for restaurants in df["restaurants"]:
         for restaurant in restaurants:
             zomato_events = restaurant["restaurant"].get("zomato_events", "NA")
@@ -86,13 +120,40 @@ def get_restaurant_events(json_file, output_file):
                                     "Event End Date": event_end
                                 })
                
-
-
-
     restaurant_df = pd.DataFrame(event_list)
     restaurant_df.to_csv(output_file, index=False)
+
+
+def analyse_ratings(json_file):
+    """
+    Analyses and summarises restaurant ratings from a JSON file.
+
+    Parameters:
+    json_file (str): The path to the JSON file containing restaurant data.
+
+    Returns:
+    None
+    """
+    if not os.path.exists(json_file):
+        raise FileNotFoundError(f"File not found: {json_file}")
+    
+    df = pd.read_json(json_file, encoding='utf-8')
+    ratings_data = []
+
+    for restaurants in df["restaurants"]:
+        for restaurant in restaurants:
+            rating = restaurant["restaurant"]["user_rating"]["aggregate_rating"]
+            rating_text = restaurant["restaurant"]["user_rating"]["rating_text"]
+            rating = float(rating)
+            ratings_data.append((rating, rating_text))
+
+    df = pd.DataFrame(ratings_data, columns=["Rating", "Rating Text"])
+    rating_summary = df.groupby("Rating Text")["Rating"].agg(["min", "max", "mean", "count"]).sort_index()
+    print(rating_summary)
+
 
 if __name__ == "__main__":
     country_codes = get_country_code("data/Country-Code.xlsx")
     get_restaurant_data("data/restaurant_data.json", country_codes, "output/restaurant_details.csv")
     get_restaurant_events("data/restaurant_data.json", "output/restaurant_events.csv")
+    analyse_ratings("data/restaurant_data.json")
