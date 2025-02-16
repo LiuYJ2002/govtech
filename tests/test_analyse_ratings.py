@@ -6,7 +6,7 @@ from src.restaurant.analyse_ratings import analyse_ratings
 
 
 class TestAnalyseRatings(unittest.TestCase):
-
+    """Test analyse_ratings function provides the correct summary table"""
     @patch("os.path.exists")
     @patch("pandas.read_json")
     @patch("sys.stdout", new_callable=StringIO)
@@ -14,7 +14,7 @@ class TestAnalyseRatings(unittest.TestCase):
         # Mock os.path.exists to return True as if the file exists
         mock_exists.return_value = True
         
-        # Mock JSON data for the test
+        # Mock JSON data 
         mock_json_data = [{
             "restaurants": [
                 {"restaurant": {
@@ -37,7 +37,6 @@ class TestAnalyseRatings(unittest.TestCase):
         
         analyse_ratings("mock_data.json")
         
-        # Get the printed output from the mock_stdout
         printed_output = mock_stdout.getvalue()
         
         expected_keys = ["Good", "Excellent", "Average", "min", "max", "mean", "count"]
@@ -50,6 +49,7 @@ class TestAnalyseRatings(unittest.TestCase):
         self.assertRegex(printed_output, r"Average\s+2\.0\s+2\.0\s+2\.0\s+1")
 
     def test_file_not_found(self):
+        """Test FileNotFoundError is raised when file does not exist"""
         with self.assertRaises(FileNotFoundError):
             analyse_ratings("non_existing_file.json")
 

@@ -7,6 +7,7 @@ class TestRestaurantData(unittest.TestCase):
     
     @patch("pandas.read_excel")
     def test_get_country_code_valid_file(self, mock_read_excel):
+        """Tests the get_country_code function works."""
         # Mock Excel data
         mock_df = pd.DataFrame({"Country Code": [1, 14], "Country": ["India", "Australia"]})
         mock_read_excel.return_value = mock_df
@@ -18,6 +19,7 @@ class TestRestaurantData(unittest.TestCase):
         self.assertEqual(result, expected_output)
     
     def test_get_country_code_file_not_found(self):
+        """Tests that the function raises a FileNotFoundError if the file is not found."""
         with self.assertRaises(FileNotFoundError):
             get_country_code("non_existent_file.xlsx")
     
@@ -25,6 +27,7 @@ class TestRestaurantData(unittest.TestCase):
     @patch("src.restaurant.restaurant_extractor.get_country_code")
     @patch("pandas.DataFrame.to_csv")
     def test_get_restaurant_data_match(self, mock_to_csv, mock_get_country_code, mock_read_json):
+        """Tests the get_restaurant_data function works when there is a match."""
         # Mock country codes
         mock_get_country_code.return_value = {1: "USA", 2: "India"}
         
@@ -98,6 +101,7 @@ class TestRestaurantData(unittest.TestCase):
     @patch("src.restaurant.restaurant_extractor.get_country_code")
     @patch("pandas.DataFrame.to_csv")
     def test_get_restaurant_data_no_match(self, mock_to_csv, mock_get_country_code, mock_read_json):
+        """Tests the get_restaurant_data function works when no match is found."""
         # Mock country codes
         mock_get_country_code.return_value = {1: "USA", 2: "India"}
         

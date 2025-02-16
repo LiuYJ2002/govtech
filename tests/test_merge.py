@@ -5,6 +5,7 @@ from src.carpark.carpark_processing import merge_carpark_data
 class TestMergeCarparkData(unittest.TestCase):
 
     def test_merge_carpark_data(self):
+        """Test that the merge_carpark_data function works as expected by merging based off carpark number"""
         # fake csv data
         csv_data = pd.DataFrame({
             "car_park_no": ["A01", "B02", "C03"],
