@@ -64,5 +64,7 @@ def get_restaurant_events(json_file, output_file):
     restaurant_df = pd.DataFrame(event_list)
     restaurant_df.to_csv(output_file, index=False)
 
+    return restaurant_df
+
 
 
