@@ -25,7 +25,7 @@ if __name__ == "__main__":
     # Merge data and clean it
     merged_data = merge_carpark_data(csv_data, api_data)
     
-    # Setup CLI
+    # Setup Parser
     parser = create_parser()
     args = parser.parse_args()
 

@@ -1,6 +1,5 @@
 import unittest
 import pandas as pd
-from unittest.mock import patch, MagicMock
 from src.carpark.carpark_cli import create_parser, query_by_carpark_number, query_by_address, generate_carpark_report  
 
 
@@ -24,6 +23,7 @@ class TestCarParkFunctions(unittest.TestCase):
         })
 
     def test_create_parser(self):
+        """Test if the parser is created correctly"""
         parser = create_parser()
         # test if it parses carpark number
         args = parser.parse_args(['--carpark_number', 'A01'])
@@ -36,22 +36,24 @@ class TestCarParkFunctions(unittest.TestCase):
         self.assertIsNone(args.carpark_number)
 
     def test_query_by_carpark_number(self):
+        """Test if the query by carpark number works correctly"""
         result = query_by_carpark_number('A01', self.sample_data)
         self.assertEqual(result.shape[0], 1)  # Only one row should match
         self.assertEqual(result['car_park_no'].iloc[0], 'A01')
 
     def test_query_by_address(self):
+        """Test if the query by address works correctly"""
         result = query_by_address('Location1', self.sample_data)
         self.assertEqual(result.shape[0], 1)  # Only one row should match
         self.assertEqual(result['address'].iloc[0], 'Location1')
         
-        # Test case insensitive matching
+        # Test insensitive case
         result = query_by_address('location1', self.sample_data)
         self.assertEqual(result.shape[0], 1)
 
     def test_generate_carpark_report(self):
+        """Test if the carpark report is generated correctly"""
         report = generate_carpark_report(self.sample_data)
-        
         sections = report.strip().split('\n\n')
 
         # Check each section for relevant columns

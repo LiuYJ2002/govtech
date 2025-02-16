@@ -6,31 +6,31 @@ from src.restaurant.events_extractor import is_event_in_april_2019, get_restaura
 class TestRestaurantEvents(unittest.TestCase):
 
     def test_is_event_in_april_2019_valid(self):
-        # Test case where the event overlaps with April 2019
+        """Test case where the event is in April 2019"""
         start_date = "2019-03-10"
         end_date = "2019-05-15"
         self.assertTrue(is_event_in_april_2019(start_date, end_date))
 
     def test_is_event_in_april_2019_not_overlapping(self):
-        # Test case where the event does not overlap with April 2019
+        """ Test case where the event does not overlap with April 2019"""
         start_date = "2019-03-25"
         end_date = "2019-03-30"
         self.assertFalse(is_event_in_april_2019(start_date, end_date))
 
     def test_is_event_in_april_2019_edge_case_start(self):
-        # Test case where the event starts in April
+        """Test case where the event starts in April"""
         start_date = "2019-04-01"
         end_date = "2019-04-10"
         self.assertTrue(is_event_in_april_2019(start_date, end_date))
 
     def test_is_event_in_april_2019_edge_case_end(self):
-        # Test case where the event ends in April
+        """Test case where the event ends in April"""
         start_date = "2019-04-25"
         end_date = "2019-04-30"
         self.assertTrue(is_event_in_april_2019(start_date, end_date))
 
     def test_is_event_in_april_2019_edge_case_no_overlap(self):
-        # Test case where the event does not overlap with April
+        """Test case where the event does not overlap with April"""
         start_date = "2019-05-01"
         end_date = "2019-05-05"
         self.assertFalse(is_event_in_april_2019(start_date, end_date))
@@ -38,6 +38,7 @@ class TestRestaurantEvents(unittest.TestCase):
     @patch("pandas.read_json")
     @patch("pandas.DataFrame.to_csv")
     def test_get_restaurant_events(self, mock_to_csv, mock_read_json):
+        """Test case where there are 2 restaurants with events in April 2019"""
         # Mock JSON data
         mock_json_data = [{
             "restaurants": [
