@@ -63,3 +63,5 @@ def get_restaurant_data(json_file, country_codes_file, output_file):
 
     restaurant_df = pd.DataFrame(restaurant_list)
     restaurant_df.to_csv(output_file, index=False)
+
+    return restaurant_df

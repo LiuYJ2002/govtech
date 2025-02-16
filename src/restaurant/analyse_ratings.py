@@ -28,3 +28,4 @@ def analyse_ratings(json_file):
     df = pd.DataFrame(ratings_data, columns=["Rating", "Rating Text"])
     rating_summary = df.groupby("Rating Text")["Rating"].agg(["min", "max", "mean", "count"]).sort_index()
     print(rating_summary)
+    return rating_summary
